@@ -1,0 +1,60 @@
+config:
+  name: flux_train_replicate
+  process:
+  - datasets:
+    - cache_latents_to_disk: true
+      caption_dropout_rate: 0.05
+      caption_ext: txt
+      folder_path: input_images
+      resolution:
+      - 512
+      - 768
+      - 1024
+      shuffle_tokens: false
+    device: cuda:0
+    model:
+      is_flux: true
+      name_or_path: black-forest-labs/FLUX.1-dev
+      quantize: true
+    network:
+      linear: 16
+      linear_alpha: 16
+      type: lora
+    sample:
+      guidance_scale: 4
+      height: 1024
+      neg: ''
+      prompts:
+      - a sign that says 'I LOVE PROMPTS!' in the style of [trigger]
+      sample_every: 250
+      sample_steps: 20
+      sampler: flowmatch
+      seed: 42
+      walk_seed: true
+      width: 1024
+    save:
+      dtype: float16
+      max_step_saves_to_keep: 1
+      save_every: 1001
+    train:
+      batch_size: 1
+      content_or_style: balanced
+      dtype: bf16
+      ema_config:
+        ema_decay: 0.99
+        use_ema: true
+      gradient_accumulation_steps: 1
+      gradient_checkpointing: true
+      lr: 0.0004
+      noise_scheduler: flowmatch
+      optimizer: adamw8bit
+      steps: 1000
+      train_text_encoder: false
+      train_unet: true
+    training_folder: output
+    trigger_word: TOK
+    type: sd_trainer
+job: extension
+meta:
+  name: flux_train_replicate
+  version: '1.0'
